@@ -1,0 +1,17 @@
+{
+  "name": "errup",
+  "description": "Simple error handling helper.",
+  "version": "0.1.0",
+  "keywords": [
+    "error",
+    "handling"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "test": "mocha -r should -R spec -t 500"
+  },
+  "devDependencies": {
+    "mocha": "~1.10.0",
+    "should": "~1.2.2"
+  }
+}
