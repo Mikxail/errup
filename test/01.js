@@ -6,9 +6,6 @@ describe("Import", function(){
     it("is function", function(){
         errUp.should.be.a("function");
     });
-    it("call return is function", function(){
-        errUp().should.be.a("function");
-    });
 });
 
 describe("return function success", function(){
@@ -124,8 +121,8 @@ describe("return function is fail", function(){
                 }));
             }));
         })(function(err){
-            err.should.throw();
-            done()
+            err.should.be.throw();
+            done();
         });
     });
 
@@ -150,13 +147,85 @@ describe("return function is fail", function(){
     });
 
     it("if havnt $cb", function(done){
-        (function(){
-            asyncFunc(errUp(function(){
-                done('error');
+        try {
+            (function(){
+                asyncFunc(errUp(function(){
+                    done('error');
+                }));
+            })()
+        } catch (e) {
+            e.should.be.throw();
+            done()
+        }
+    });
+});
+
+describe("found callback", function(){
+    var errAsyncFunc = function(callback){
+        callback('err');
+    };
+    it("if cb was last and func", function(done){
+        (function(p1, p2, callback) {
+            errAsyncFunc(errUp(function(){
+                done('err');
             }));
-        })()
-        setTimeout(function(){
+        })(1,2, function(err){
+            err.should.equal('err');
             done();
-        }, 250);
+        });
+    });
+
+    it("if cb was not last and be a func", function(done){
+        (function(p1, callback, p2) {
+            errAsyncFunc(errUp(function(){
+                done('err');
+            }));
+        })(1, function(err){
+            err.should.equal('err');
+            done();
+        }, 2);
+    });
+
+    it("if cb was custom name", function(done){
+        (function(p1, p2, $ccc) {
+            errAsyncFunc(errUp(function(){
+                done('err');
+            }));
+        })(1, 2, function(err){
+            err.should.equal('err');
+            done();
+        });
+    });
+
+    it("if cb was bad custom name", function(done){
+        try {
+            (function(p1, p2, ccc) {
+                errAsyncFunc(errUp(function(){
+                    done('err');
+                }));
+            })(1, 2, function(err){
+                err.should.equal('err');
+                done();
+            });
+        } catch (e) {
+            e.should.be.throw();
+            done();
+        }
+    });
+
+    it("if cb was last and not func", function(done){
+        try {
+            (function(p1, p2, callback) {
+                errAsyncFunc(errUp(function(){
+                    done('err');
+                }));
+            })(1,2, 3, function(err){
+                err.should.equal('err');
+                done();
+            });
+        } catch (e) {
+            e.should.be.throw();
+            done();
+        }
     });
 });
