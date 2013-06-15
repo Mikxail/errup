@@ -3,6 +3,7 @@ var errToFunc = errTo();
 
 var slice = Array.prototype.slice;
 var argRegExp = /\(([^)]+)\)/;
+var splitRegExp = /\s*,\s*/;
 
 module.exports = function fn (successHandler) {
     var errorHandler;
@@ -12,7 +13,7 @@ module.exports = function fn (successHandler) {
         var paths;
         if ( paths = (fn.caller+"").match(argRegExp) ) {
 
-            paths = paths[1].split(/\s*,\s*/)
+            paths = paths[1].split(splitRegExp);
             for (var i=paths.length-1; i>=0; i--) {
                 if ((paths[i].indexOf("$") == 0 || module.exports.cbNames.indexOf(paths[i]) != -1)
                     && (typeof fn.caller.arguments[i] === "function")
@@ -24,9 +25,7 @@ module.exports = function fn (successHandler) {
         }
     }
     if (!errorHandler) {
-        // console.log("fn.caller.caller", fn.caller.caller+"");
-        // console.log("fn.caller", fn.caller+"")
-        throw new Error("can not find error callback");
+        throw new Error("can not find error handler");
     }
     return errTo(errorHandler, successHandler);
 };
