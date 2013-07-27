@@ -1,6 +1,7 @@
-errUp = require(__dirname+"/../")
-fs = require("fs")
-should1 = require('should')
+errUp   = require(__dirname+"/../")
+fs      = require("fs")
+async   = require("async");
+should1 = require('should');
 
 describe("Import", function(){
     it("is function", function(){
@@ -220,12 +221,22 @@ describe("found callback", function(){
                     done('err');
                 }));
             })(1,2, 3, function(err){
-                err.should.equal('err');
-                done();
+                done('error')
             });
         } catch (e) {
             e.should.be.throw();
             done();
         }
+    });
+
+    it("with async function", function(done){
+        async.each([1,2,3,4], function(d, next){
+            errAsyncFunc(errUp(function(){
+                done('err');
+            }))
+        }, function(err, data){
+            err.should.equal("err");
+            done()
+        });
     });
 });
