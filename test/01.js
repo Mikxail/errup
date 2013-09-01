@@ -102,7 +102,7 @@ describe("return function is fail", function(){
     //         }))
     //     }));
     // });
-    
+
     it("pass err to $cb", function(done){
         (function($cb){
             asyncFunc(errUp(function(){
@@ -165,6 +165,20 @@ describe("found callback", function(){
     var errAsyncFunc = function(callback){
         callback('err');
     };
+
+    function MyError(message) {
+        this.name = "MyError";
+        this.message = (message || "");
+    }
+    MyError.prototype = Error.prototype;
+    var errmyAsyncFunc = function(callback){
+        callback(new MyError('err'));
+    };
+
+    var asyncFunc = function(callback){
+        callback(null, 'arg1', 'arg2', 'arg3')
+    };
+
     it("if cb was last and func", function(done){
         (function(p1, p2, callback) {
             errAsyncFunc(errUp(function(){
@@ -239,4 +253,121 @@ describe("found callback", function(){
             done()
         });
     });
+
+
+    it("catch some errors", function(done){
+        (function(next){
+            errAsyncFunc(errUp(function(){
+                done('error');
+            }, ['zzz', 'err'], function(err){
+                err.should.equal("err")
+                done()
+            }));
+        })(function(){
+            done('error')
+        })
+    });
+
+    it("catch some errors by typeof", function(done){
+        (function(next){
+            errmyAsyncFunc(errUp(function(){
+                done('error');
+            }, ['err', MyError], function(err){
+                err.should.be.an.instanceOf(MyError)
+                done()
+            }));
+        })(function(){
+            done('error')
+        })
+    });
+
+    it("catch some errors by typeof with inheritance", function(done){
+        (function(next){
+            errmyAsyncFunc(errUp(function(){
+                done('error');
+            }, ['err', Error], function(err){
+                err.should.be.an.instanceOf(MyError)
+                done()
+            }));
+        })(function(){
+            done('error')
+        })
+    });
+
+
+    it("do not catch not declared errors", function(done){
+        (function(next){
+            errAsyncFunc(errUp(function(){
+                done('error');
+            }, ['err1', Error], function(err){
+                done('error')
+            }));
+        })(function(err){
+            err.should.equal("err");
+            done();
+        })
+    });
+
+    it("catch all errors", function(done){
+        (function(next){
+            errmyAsyncFunc(errUp(function(){
+                done('error');
+            }, null, function(err){
+                err.should.be.an.instanceOf(MyError)
+                done()
+            }));
+        })(function(){
+            done('error')
+        })
+    });
+
+    it("catch error in long stack", function(done){
+        (function(next){
+            asyncFunc(errUp(function(){
+                asyncFunc(errUp(function(){
+                    errAsyncFunc(errUp(function(){
+                        done('error')
+                    }))
+                }))
+            }, ['err'], function(err){
+                err.should.equal('err');
+                done();
+            }));
+        })(function(){
+            done('error')
+        })
+    });
+
+    it("work good as errTo", function(done){
+        (function(next){
+            (function($cb){
+                errAsyncFunc(errUp(next, function(){
+                    done('error1');
+                }));
+            })(function(){
+                done('error2')
+            })
+        })(function(err){
+            err.should.equal('err');
+            done()
+        })
+    });
+
+    it("work good as errTo and catch some errors", function(done){
+        (function(next){
+            (function($cb){
+                errAsyncFunc(errUp(next, function(){
+                    done('error1');
+                }, ['err'], function(err){
+                    err.should.equal("err")
+                    done()
+                }));
+            })(function(){
+                done('error2')
+            })
+        })(function(){
+            done('error3')
+        })
+    });
+
 });
