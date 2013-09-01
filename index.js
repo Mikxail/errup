@@ -13,10 +13,11 @@ var foundErrorHandler = function(_caller, errorTypes, catchHandler, errorHandler
         // try found type of error and do catch
         if (catchHandler) {
             if (errorTypes && errorTypes.length) {
-                for (var i=0, errType; i<errorTypes.length; i++) {
-                    errType = errorTypes[i]
-                    if (typeof errType == "string") {
-                        if (err == errType) {
+                for (var i=0, errType, errTypeTypeof; i<errorTypes.length; i++) {
+                    errType = errorTypes[i];
+                    errTypeTypeof = typeof errType;
+                    if (errTypeTypeof == "string" || errTypeTypeof == "number") {
+                        if (err === errType) {
                             errorHandler = catchHandler;
                             break;
                         }
