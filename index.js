@@ -7,6 +7,7 @@ var splitRegExp = /\s*,\s*/;
 
 var foundErrorHandler = function(_caller, errorTypes, catchHandler, errorHandler){
     var _callerArgs = _caller.arguments;
+    var _caller2 = _caller.caller;
     return function (err){
         // var errorHandler;
 
@@ -33,8 +34,8 @@ var foundErrorHandler = function(_caller, errorTypes, catchHandler, errorHandler
 
         if (!errorHandler) {
             // when errUp is secont, third, .. in call stacks of errUp
-            if (_caller.caller+"" == errToFunc) {
-                errorHandler = _caller.caller.errorHandler;
+            if (_caller2+"" == errToFunc) {
+                errorHandler = _caller2.errorHandler;
             } else {
                 var paths;
                 if ( paths = (_caller+"").match(argRegExp) ) {
