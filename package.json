@@ -17,5 +17,20 @@
   },
   "dependencies": {
     "errto": "*"
+  },
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Mikxail/errup.git"
+  },
+  "author": {
+    "name": "Mikhail Konovalov",
+    "email": "mikxail.k@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/Mikxail/errup/issues"
   }
 }
