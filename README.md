@@ -1,4 +1,4 @@
-## errup - magick error handling for node.js
+## errup - magic error handling for node.js
 
 All hates "callback hell" in node.js. With this module you doesn't need check 'err' every callback. Callback error will be checked automaticly and will be rised if it needed.
 
