@@ -94,4 +94,12 @@ readDirAsync errUp (dir) ->
     else
         console.warn "Lock found.. Delete it."
         fs.unlink "lock"
+
+# catch all errors
+readDirAsync errUp (dir) ->
+    # error "many" will raised, and can be catched
+    readStatus errUp (status) ->
+        console.log(dir, status)
+, null, (err) ->
+    console.error "Error catched"
 ```
